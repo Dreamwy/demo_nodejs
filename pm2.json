@@ -1,0 +1,19 @@
+{
+	"apps": [
+		{
+			"name": "demo_01",
+			"script": "./index.js",
+			"wechat": "true",
+			"node_args": "--harmony",
+			"exec_interpreter": "babel-node",
+			"exec_mode": "fork",
+			"error_file": "error.log",
+			"out_file": "out.log",
+			"pid_file": "express-consign.pid",
+			"env": {
+				"NODE_ENV": "production"
+			},
+			"log_date_format": "YYYY-MM-DD HH:mm:ss"
+		}
+	]
+}

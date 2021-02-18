@@ -1,0 +1,15 @@
+
+Sjavascript:S1481"7Remove the declaration of the unused 'config' variable.(¼ô’–
+Gjavascript:S1128"&Remove this unused import of 'morgan'.(”‰Áùÿÿÿÿÿ
+Gjavascript:S1128"&Remove this unused import of 'logger'.(Í¹ÙÁÿÿÿÿÿ
+7javascript:S1116"Unnecessary semicolon.(ôŸŽìúÿÿÿÿ
+Ujavascript:S1854
+"4Remove this useless assignment to variable "client".(÷“ß‰úÿÿÿÿ
+Ejavascript:S1128"$Remove this unused import of 'cors'.(çç›—ýÿÿÿÿ
+Gjavascript:S1128"&Remove this unused import of 'helmet'.(‰¯À’úÿÿÿÿ
+Pjavascript:S1854"4Remove this useless assignment to variable "config".(¼ô’–
+Xjavascript:S1481
+"7Remove the declaration of the unused 'client' variable.(÷“ß‰úÿÿÿÿ
+Ijavascript:S1128"!Remove this unused import of '_'.(ŠÐ’œýÿÿÿÿ8ÕŒÖ„ï.
+^javascript:S1481"<Remove the declaration of the unused 'utilManager' variable.(¹â×"8ÕŒÖ„ï.
+[javascript:S1854"9Remove this useless assignment to variable "utilManager".(¹â×"8ÕŒÖ„ï.
