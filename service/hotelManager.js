@@ -1,4 +1,5 @@
 let Sequelize = require("sequelize");
+var shortid=require("js-shortid");
 import BaseManager from './baseManager';
 import _ from 'lodash';
 class HotelManager extends BaseManager {
@@ -7,8 +8,7 @@ class HotelManager extends BaseManager {
     }
     
     async createHotel(param) {
-        console.log(param);
-        _.merge(param,{"id":uuid()})
+        _.merge(param,{"id":shortid.gen()})
 		let [result] = await this.model.bulkCreate([param], {
 			ignoreDuplicates: true
 		});
@@ -29,17 +29,3 @@ class HotelManager extends BaseManager {
 module.exports = app => {
     return new HotelManager(app)
 };
-
-function uuid() {
-    var s = [];
-    var hexDigits = "0123456789abcdef";
-    for (var i = 0; i < 36; i++) {
-        s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
-    }
-    s[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
-    s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
-    s[8] = s[13] = s[18] = s[23] = "-";
-
-    var uuid = s.join("");
-    return uuid;
-}

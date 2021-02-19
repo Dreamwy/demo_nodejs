@@ -2,12 +2,11 @@ let Sequelize = require("sequelize");
 import moment from 'moment'
 import _ from 'lodash';
 module.exports = function(sequelize, DataTypes) {
-	let Hotel = sequelize.define("Hotel", {
+	let Order = sequelize.define("Order", {
 		id: { type: Sequelize.STRING, primaryKey: true,allowNull: false},
-        province :  { type: Sequelize.STRING},
-        city :  { type: Sequelize.STRING},
-        name :  { type: Sequelize.STRING},
-        payway :  { type: Sequelize.INTEGER,defaultValue:1},
+        playerid :  { type: Sequelize.STRING},
+        deviceid:  { type: Sequelize.STRING},
+        content :  { type: Sequelize.STRING},
 		created_at: {
             type: Sequelize.DATE,
             get() {
@@ -30,15 +29,14 @@ module.exports = function(sequelize, DataTypes) {
             }
         }
 	}, {
-		tableName: 'hotel',
-		comment: '酒店表',
+		tableName: 'order',
+		comment: '订单表',
 		underscored: true,
 		'timestamps': true,
 		'paranoid': true
 	});
-	Hotel.associate = function(models) {
-        // Hotel.hasMany(models.Device, {foreignKey: 'id'})
+	Order.associate = function(models) {
 
     }
-	return Hotel;
+	return Order;
 };
