@@ -16,8 +16,9 @@ module.exports = app => {
         }
         
     });
-    
+
     app.get("/api/device/create",async (req, res) => {
+        console.log(req)
         // let device = _.pick(req.body, ['fullname', 'mobile']);
         if(req.query.id == null){
             return res.json({ state: "error", errorMsg:"设备id不能为空" })
