@@ -7,6 +7,7 @@ module.exports = function(sequelize, DataTypes) {
         playerid :  { type: Sequelize.STRING},
         deviceid:  { type: Sequelize.STRING},
         content :  { type: Sequelize.STRING},
+        status :  { type: Sequelize.STRING},
 		created_at: {
             type: Sequelize.DATE,
             get() {
@@ -32,11 +33,16 @@ module.exports = function(sequelize, DataTypes) {
 		tableName: 'order',
 		comment: '订单表',
 		underscored: true,
-		'timestamps': true,
 		'paranoid': true
 	});
 	Order.associate = function(models) {
-
+        Order.belongsTo(models.Device, {
+            onDelete: "CASCADE",
+			foreignKey: {
+				name : 'deviceid',
+				allowNull: false
+			}
+        });
     }
 	return Order;
 };

@@ -33,7 +33,6 @@ module.exports = function(sequelize, DataTypes) {
 		tableName: 'hotel',
 		comment: '酒店表',
 		underscored: true,
-		'timestamps': true,
 		'paranoid': true
 	});
 	Hotel.associate = function(models) {

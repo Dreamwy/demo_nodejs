@@ -39,7 +39,6 @@ module.exports = function(sequelize, DataTypes) {
 		tableName: 'device',
 		comment: '设备表',
 		underscored: true,
-		'timestamps': true,
         'paranoid':
          true
 	});

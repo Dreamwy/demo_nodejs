@@ -18,12 +18,12 @@ module.exports = app => {
     });
 
     app.get("/api/device/create",async (req, res) => {
-        console.log(req)
+        console.log(req.query.id)
         // let device = _.pick(req.body, ['fullname', 'mobile']);
-        if(req.query.id == null){
+        if(_.isEmpty(req.query.id)){
             return res.json({ state: "error", errorMsg:"设备id不能为空" })
         }
-        if(req.query.hotelid == null){
+        if(_.isEmpty(req.query.hotelid)){
             return res.json({ state: "error", errorMsg:"酒店id不能为空" })
         }
         let result = await hotelManager.getById(req.query.hotelid)
