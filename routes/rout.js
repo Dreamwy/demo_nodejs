@@ -48,45 +48,57 @@ module.exports = app => {
     });
     
     
+    app.get("/api/wxlogin",async(req,res)=>{
+        let code = req.query.code;
+        let url = "https://api.weixin.qq.com/sns/jscode2session";
+        url += "?appid=wxff785bbaf32ceac3";//自己的appid
+        url += "&secret=59b29ca515ccf40c39d89c7d91c76239";//自己的appSecret
+        url += "&js_code=" + code;
+        request(url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+              console.log(body) // 请求成功的处理逻辑，注意body是json字符串
+              res.send(body)
+            }
+          });
+    });
 
-
-    app.get("/api/hotel/info",async(req,res)=>{
-        let uid = req.query.id;
-        let user_info = await hotelManager.getById(uid);
-        if(!!user_info){
-            res.json(user_info);
-        }else{
-            res.json({ state:"error", errorMsg:"用户不存在"});
-        }
+    // app.get("/api/hotel/info",async(req,res)=>{
+    //     let uid = req.query.id;
+    //     let user_info = await hotelManager.getById(uid);
+    //     if(!!user_info){
+    //         res.json(user_info);
+    //     }else{
+    //         res.json({ state:"error", errorMsg:"用户不存在"});
+    //     }
         
-    });
-    app.get("/api/hotel/create",async (req, res) => {
-        let result = await hotelManager.createHotel(req.query);
-        if(!!result){
+    // });
+    // app.get("/api/hotel/create",async (req, res) => {
+    //     let result = await hotelManager.createHotel(req.query);
+    //     if(!!result){
             
-            res.json({code:20000, state: "success", msg:"创建成功" })
-        }else{
-            console.log("222222")
-            res.json({ state:"error", errorMsg:"创建失败" })
-        }
+    //         res.json({code:20000, state: "success", msg:"创建成功" })
+    //     }else{
+    //         console.log("222222")
+    //         res.json({ state:"error", errorMsg:"创建失败" })
+    //     }
 
-    });
+    // });
 
-    app.get("/api/hotel/list",async (req, res) => {
-        let { page, size, _fullname } = req.query;
-        let query = _.pick(req.query, ['mobile']);
-        if (!!_fullname) {
-            query.fullname = { [Op.like]: `%${_fullname}%` }
-        }
-        let param = {
-            page: page,
-            size: size,
-            query: query
-        }
-        let result = await hotelManager.getMany(param);
-        result.code = 20000
-        res.json(result);
-    });
+    // app.get("/api/hotel/list",async (req, res) => {
+    //     let { page, size, _fullname } = req.query;
+    //     let query = _.pick(req.query, ['mobile']);
+    //     if (!!_fullname) {
+    //         query.fullname = { [Op.like]: `%${_fullname}%` }
+    //     }
+    //     let param = {
+    //         page: page,
+    //         size: size,
+    //         query: query
+    //     }
+    //     let result = await hotelManager.getMany(param);
+    //     result.code = 20000
+    //     res.json(result);
+    // });
 
 
     // app.all("*", function (req, res, next) {
