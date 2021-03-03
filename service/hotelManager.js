@@ -8,6 +8,7 @@ class HotelManager extends BaseManager {
     }
     
     async createHotel(param) {
+        console.log(param)
         _.merge(param,{"id":shortid.gen()})
 		let [result] = await this.model.bulkCreate([param], {
 			ignoreDuplicates: true
