@@ -6,6 +6,7 @@ module.exports = function(sequelize, DataTypes) {
 		id: { type: Sequelize.STRING, primaryKey: true,allowNull: false},
         province :  { type: Sequelize.STRING},
         city :  { type: Sequelize.STRING},
+        address :  { type: Sequelize.STRING},
         name :  { type: Sequelize.STRING},
         payway :  { type: Sequelize.INTEGER,defaultValue:1},
 		created_at: {

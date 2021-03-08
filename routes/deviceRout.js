@@ -49,7 +49,10 @@ module.exports = app => {
             size: size,
             query: query
         }
+        console.log(param)
         let result = await deviceManager.getMany(param);
+        result.code = 20000
+        console.log(result)
         res.json(result);
     });
 
