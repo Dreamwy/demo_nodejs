@@ -3,7 +3,9 @@ import moment from 'moment'
 module.exports = function(sequelize, DataTypes) {
 	let DeviceRecord = sequelize.define("DeviceRecord", {
 		id: { type: Sequelize.STRING, primaryKey: true,allowNull: false},
-		deviceid: { type: Sequelize.STRING},
+        deviceid: { type: Sequelize.STRING},
+        orderid: { type: Sequelize.STRING},
+        playerid :  { type: Sequelize.STRING},
         content:  { type: Sequelize.STRING},
 		installtime: {
             type: Sequelize.DATE,
@@ -45,6 +47,13 @@ module.exports = function(sequelize, DataTypes) {
             onDelete: "CASCADE",
 			foreignKey: {
 				name : 'deviceid',
+				allowNull: false
+			}
+        });
+        DeviceRecord.belongsTo(models.Order, {
+            onDelete: "CASCADE",
+			foreignKey: {
+				name : 'orderid',
 				allowNull: false
 			}
         });

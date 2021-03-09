@@ -62,6 +62,18 @@ module.exports = app => {
           });
     });
 
+    app.get("/api/allcount",async(req,res)=>{
+        let [result, metadata] = await db.sequelize.query("select province,count(distinct(hotelid)),count(distinct(deviceid)) from (SELECT hotel.id AS hotelid,province,device.id AS deviceid FROM hotel,device WHERE hotel.id=device.hotelid) as tmp GROUP BY province")
+        // let uid = req.query.id;
+        // let device_info = await deviceManager.getById(uid);
+        if(!!result){
+            res.json(result);
+        }else{
+            res.json({ state:"error", errorMsg:"用户不存在"});
+        }
+        
+    });
+
     // app.get("/api/hotel/info",async(req,res)=>{
     //     let uid = req.query.id;
     //     let user_info = await hotelManager.getById(uid);
