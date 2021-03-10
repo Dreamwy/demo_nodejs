@@ -1,9 +1,11 @@
 let request = require('request');
 import _ from 'lodash';
+let Sequelize = require("sequelize");
 module.exports = app => {
     const {
         userManager,
         deviceManager,
+        deviceRecordManager,
         hotelManager,
         orderManager
     } = app.service;
@@ -22,17 +24,58 @@ module.exports = app => {
         if(_.isEmpty(req.query.deviceid)){
             return res.json({ state: "error", errorMsg:"设备id不能为空" })
         }
-        let result = await deviceManager.getById(req.query.deviceid)
+        var result = await deviceManager.getById(req.query.deviceid)
         if(result == null){
             return res.json({ state: "error", errorMsg:"设备id未找到" })
-        }
-        result = await orderManager.createOrder(req.query);
-        if(!!result){
-            res.json({code:20000, state: "success", msg:"创建成功" })
         }else{
-            res.json({ state:"error", errorMsg:"创建失败" })
+            result = await orderManager.getByDeviceId(req.query.deviceid)
+            if(!!result){
+                if(result.status == "end"){
+                    result = await orderManager.createOrder(req.query);
+                    if(!!result){
+                        result = await deviceRecordManager.createDeviceRecord(
+                            {"orderid":result.id,
+                            "deviceid":req.query.deviceid,
+                            "playerid":req.query.playerid
+                        })
+                        if(!!result){
+                            res.json({code:20000, state: "success", msg:"创建成功" })
+                        }else{
+                            res.json({state: "error", errorMsg:"创建使用记录失败" })
+                        }
+                    }else{
+                        res.json({ state:"error", errorMsg:"创建订单失败" })
+                    }
+                }else{
+                    result = await deviceRecordManager.createDeviceRecord(
+                        {"orderid":result.id,
+                        "deviceid":req.query.deviceid,
+                        "playerid":req.query.playerid
+                    })
+                    if(!!result){
+                        res.json({code:20000, state: "success", msg:"创建成功1" })
+                    }else{
+                        res.json({state: "error", errorMsg:"创建使用记录失败2" })
+                    }
+                }
+            }else{
+                result = await orderManager.createOrder(req.query);
+                if(!!result){
+                    result = await deviceRecordManager.createDeviceRecord(
+                        {"orderid":result.id,
+                        "deviceid":req.query.deviceid,
+                        "playerid":req.query.playerid
+                    })
+                    if(!!result){
+                        res.json({code:20000, state: "success", msg:"创建成功3" })
+                    }else{
+                        res.json({state: "error", errorMsg:"创建使用记录失败4" })
+                    }
+                }else{
+                    res.json({ state:"error", errorMsg:"创建订单5" })
+                }
+            }
         }
-
     });
 
     app.get("/api/order/list",async (req, res) => {

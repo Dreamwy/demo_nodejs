@@ -8,7 +8,6 @@ class DeviceRecordManager extends BaseManager {
     }
     
     async createDeviceRecord(param) {
-        console.log(param)
         _.merge(param,{"id":shortid.gen()})
 		let [result] = await this.model.bulkCreate([param], {
 			ignoreDuplicates: true

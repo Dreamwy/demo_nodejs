@@ -26,6 +26,15 @@ class OrderManager extends BaseManager {
 		});
 		return result;
     }
+
+    async getByDeviceId(id) {
+        let result = await this.model.findOne({
+          where: {
+            deviceid: id
+          }
+        })
+        return result;
+      }
 }
 module.exports = app => {
     return new OrderManager(app)
