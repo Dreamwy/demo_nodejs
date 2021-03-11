@@ -61,13 +61,13 @@ module.exports = app => {
             }
           });
     });
-
+    const selectall = "SELECT province,COUNT(DISTINCT(id)) as hotelCount,COUNT(DISTINCT(temp.dddid)) as deviceCount,COUNT(DISTINCT(temp.deviceRecordddrid)) as converCount,IFNULL(COUNT(DISTINCT(temp.deviceRecordddrid))/COUNT(DISTINCT(temp.dddid)),0) as converPer,IFNULL(COUNT(DISTINCT(temp.ddrid))/COUNT(DISTINCT(temp.dddid)),0) as recordPer,IFNULL(SUM(temp.dcontent)/COUNT(DISTINCT(temp.dddid)),0) as recordCount FROM hotel LEFT JOIN (SELECT device.hotelid as ddhid,device.id as dddid, deviceRecord.deviceid as deviceRecordddrid, deviceRecord.id as ddrid,IFNULL(deviceRecord.content,0) as dcontent  FROM device LEFT JOIN deviceRecord ON device.id = deviceRecord.deviceid) as temp ON hotel.id = temp.ddhid GROUP BY province"
     app.get("/api/allcount",async(req,res)=>{
-        let [result, metadata] = await db.sequelize.query("select province,count(distinct(hotelid)),count(distinct(deviceid)) from (SELECT hotel.id AS hotelid,province,device.id AS deviceid FROM hotel,device WHERE hotel.id=device.hotelid) as tmp GROUP BY province")
+        let [result, metadata] = await db.sequelize.query(selectall)
         // let uid = req.query.id;
         // let device_info = await deviceManager.getById(uid);
         if(!!result){
-            res.json(result);
+            res.json({"rows":result,"code":20000});
         }else{
             res.json({ state:"error", errorMsg:"用户不存在"});
         }
