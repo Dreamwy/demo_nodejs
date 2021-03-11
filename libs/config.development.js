@@ -25,11 +25,11 @@ module.exports = {
 			collate: 'utf8mb4_unicode_ci'
 		}
 	},
-	redis: {
-		host: '127.0.0.1',
-		port: '6379',
-		db: 0,
-		// password: '123456',
-		// auth: '123456'
-	}
+	// redis: {
+	// 	host: '127.0.0.1',
+	// 	port: '6379',
+	// 	db: 0,
+	// 	// password: '123456',
+	// 	// auth: '123456'
+	// }
 };

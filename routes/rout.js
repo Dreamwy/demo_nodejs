@@ -61,9 +61,12 @@ module.exports = app => {
             }
           });
     });
-    const selectall = "SELECT province,COUNT(DISTINCT(id)) as hotelCount,COUNT(DISTINCT(temp.dddid)) as deviceCount,COUNT(DISTINCT(temp.deviceRecordddrid)) as converCount,IFNULL(COUNT(DISTINCT(temp.deviceRecordddrid))/COUNT(DISTINCT(temp.dddid)),0) as converPer,IFNULL(COUNT(DISTINCT(temp.ddrid))/COUNT(DISTINCT(temp.dddid)),0) as recordPer,IFNULL(SUM(temp.dcontent)/COUNT(DISTINCT(temp.dddid)),0) as recordCount FROM hotel LEFT JOIN (SELECT device.hotelid as ddhid,device.id as dddid, deviceRecord.deviceid as deviceRecordddrid, deviceRecord.id as ddrid,IFNULL(deviceRecord.content,0) as dcontent  FROM device LEFT JOIN deviceRecord ON device.id = deviceRecord.deviceid) as temp ON hotel.id = temp.ddhid GROUP BY province"
+    
     app.get("/api/allcount",async(req,res)=>{
-        let [result, metadata] = await db.sequelize.query(selectall)
+        const t = moment().subtract(req.query.type,'days').format('YYYY-MM-DD')
+        console.log(t)
+        let [result, metadata] = await db.sequelize.query("SELECT province,COUNT(DISTINCT(id)) as hotelCount,COUNT(DISTINCT(temp.dddid)) as deviceCount,COUNT(DISTINCT(temp.deviceRecordddrid)) as converCount,IFNULL(COUNT(DISTINCT(temp.deviceRecordddrid))/COUNT(DISTINCT(temp.dddid)),0) as converPer,IFNULL(COUNT(DISTINCT(temp.ddrid))/COUNT(DISTINCT(temp.dddid)),0) as recordPer,IFNULL(SUM(temp.dcontent)/COUNT(DISTINCT(temp.dddid)),0) as recordCount FROM hotel LEFT JOIN (SELECT device.hotelid as ddhid,device.id as dddid, deviceRecord.deviceid as deviceRecordddrid, deviceRecord.id as ddrid,IFNULL(deviceRecord.content,0) as dcontent  FROM device LEFT JOIN deviceRecord ON device.id = deviceRecord.deviceid  and deviceRecord.created_at > "+t+" WHERE device.created_at > "+t+") as temp ON hotel.id = temp.ddhid WHERE hotel.created_at > "+t+" GROUP BY province")
+        
         // let uid = req.query.id;
         // let device_info = await deviceManager.getById(uid);
         if(!!result){
@@ -74,6 +77,21 @@ module.exports = app => {
         
     });
 
+
+//     SELECT province,COUNT(DISTINCT(id)) as hotelCount,
+// COUNT(DISTINCT(temp.dddid)) as deviceCount,
+// COUNT(DISTINCT(temp.deviceRecordddrid)) as converCount,
+// IFNULL(COUNT(DISTINCT(temp.deviceRecordddrid))/COUNT(DISTINCT(temp.dddid)),0) as converPer,
+// IFNULL(COUNT(DISTINCT(temp.ddrid))/COUNT(DISTINCT(temp.dddid)),0) as recordPer,
+// IFNULL(SUM(temp.dcontent)/COUNT(DISTINCT(temp.dddid)),0) as recordCount 
+// FROM hotel 
+// LEFT JOIN (SELECT device.hotelid as ddhid,
+// device.id as dddid, 
+// deviceRecord.deviceid as deviceRecordddrid, 
+// deviceRecord.id as ddrid,
+// IFNULL(deviceRecord.content,0) as dcontent  FROM device 
+// LEFT JOIN deviceRecord ON device.id = deviceRecord.deviceid and deviceRecord.created_at > '2021-03-11' WHERE device.created_at > '2021-03-11') as temp 
+// ON hotel.id = temp.ddhid WHERE hotel.created_at > '2021-03-11' GROUP BY province
     // app.get("/api/hotel/info",async(req,res)=>{
     //     let uid = req.query.id;
     //     let user_info = await hotelManager.getById(uid);
