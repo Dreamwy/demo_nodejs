@@ -31,7 +31,8 @@ class OrderManager extends BaseManager {
         let result = await this.model.findOne({
           where: {
             deviceid: id
-          }
+          },
+          order: [['created_at', 'DESC']],
         })
         return result;
       }
