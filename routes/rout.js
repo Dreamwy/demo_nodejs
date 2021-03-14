@@ -62,22 +62,44 @@ module.exports = app => {
           });
     });
     
-    app.get("/api/allcount",async(req,res)=>{
-        const t = moment().subtract(req.query.type,'days').format('YYYY-MM-DD')
-        console.log(t)
-        let [result, metadata] = await db.sequelize.query("SELECT province,COUNT(DISTINCT(id)) as hotelCount,COUNT(DISTINCT(temp.dddid)) as deviceCount,COUNT(DISTINCT(temp.deviceRecordddrid)) as converCount,IFNULL(COUNT(DISTINCT(temp.deviceRecordddrid))/COUNT(DISTINCT(temp.dddid)),0) as converPer,IFNULL(COUNT(DISTINCT(temp.ddrid))/COUNT(DISTINCT(temp.dddid)),0) as recordPer,IFNULL(SUM(temp.dcontent)/COUNT(DISTINCT(temp.dddid)),0) as recordCount FROM hotel LEFT JOIN (SELECT device.hotelid as ddhid,device.id as dddid, deviceRecord.deviceid as deviceRecordddrid, deviceRecord.id as ddrid,IFNULL(deviceRecord.content,0) as dcontent  FROM device LEFT JOIN deviceRecord ON device.id = deviceRecord.deviceid  and deviceRecord.created_at > '"+t+"' WHERE device.created_at > '"+t+"') as temp ON hotel.id = temp.ddhid WHERE hotel.created_at > '"+t+"' GROUP BY province")
-        
-        // let uid = req.query.id;
-        // let device_info = await deviceManager.getById(uid);
+    app.get("/api/allcount",async(req,res)=>{ 
+        let start = req.query.start
+        let end = req.query.end
+        let [result, metadata] = await db.sequelize.query("SELECT province,COUNT(DISTINCT(id)) as hotelCount,COUNT(DISTINCT(temp.dddid)) as deviceCount,COUNT(DISTINCT(temp.deviceRecordddrid)) as converCount,IFNULL(COUNT(DISTINCT(temp.deviceRecordddrid))/COUNT(DISTINCT(temp.dddid)),0) as converPer,IFNULL(COUNT(DISTINCT(temp.ddrid))/COUNT(DISTINCT(temp.dddid)),0) as recordPer,IFNULL(SUM(temp.dcontent)/COUNT(DISTINCT(temp.dddid)),0) as recordCount FROM hotel LEFT JOIN (SELECT device.hotelid as ddhid,device.id as dddid, deviceRecord.deviceid as deviceRecordddrid, deviceRecord.id as ddrid,IFNULL(deviceRecord.content,0) as dcontent  FROM device LEFT JOIN deviceRecord ON device.id = deviceRecord.deviceid  and deviceRecord.created_at BETWEEN '"+start+"' and '"+end+"' WHERE device.created_at < '"+end+"') as temp ON hotel.id = temp.ddhid WHERE hotel.created_at < '"+end+"' GROUP BY province")
         if(!!result){
             res.json({"rows":result,"code":20000});
         }else{
             res.json({ state:"error", errorMsg:"用户不存在"});
         }
-        
+    });
+
+    app.get("/api/allcountbyprovince",async(req,res)=>{
+        let province = req.query.province
+        let start = req.query.start
+        let end = req.query.end
+        console.log(start+" "+end+" "+province)
+        let [result, metadata] = await db.sequelize.query("SELECT hotel.`name`,COUNT(DISTINCT(temp.dddid)) as deviceCount,COUNT(DISTINCT(temp.deviceRecordddrid)) as converCount,IFNULL(COUNT(DISTINCT(temp.deviceRecordddrid))/COUNT(DISTINCT(temp.dddid)),0) as converPer,IFNULL(COUNT(DISTINCT(temp.ddrid))/COUNT(DISTINCT(temp.dddid)),0) as recordPer,IFNULL(SUM(temp.dcontent)/COUNT(DISTINCT(temp.dddid)),0) as recordCount FROM hotel LEFT JOIN (SELECT device.hotelid as ddhid,device.id as dddid,deviceRecord.deviceid as deviceRecordddrid,deviceRecord.id as ddrid,IFNULL(deviceRecord.content,0) as dcontent  FROM device LEFT JOIN deviceRecord ON device.id = deviceRecord.deviceid and deviceRecord.created_at BETWEEN '"+start+"' and '"+end+"' WHERE device.created_at < '"+end+"') as temp ON hotel.id = temp.ddhid WHERE hotel.created_at < '"+end+"' and hotel.province LIKE '%"+province+"%' GROUP BY hotel.`name` ORDER BY recordCount DESC")
+        if(!!result){
+            res.json({"rows":result,"code":20000});
+        }else{
+            res.json({ state:"error", errorMsg:"用户不存在"});
+        }
     });
 
 
+    // "vetur.format.defaultFormatterOptions": {
+        
+
+    //     "prettier": {
+    //         // 不加分号
+    //         "semi": false,
+    //         // 用单引号
+    //         "singleQuote": true,
+    //         // 禁止随时添加逗号
+    //         "trailingComma": "none"
+    //       }
+
+    // },
 //     SELECT province,COUNT(DISTINCT(id)) as hotelCount,
 // COUNT(DISTINCT(temp.dddid)) as deviceCount,
 // COUNT(DISTINCT(temp.deviceRecordddrid)) as converCount,

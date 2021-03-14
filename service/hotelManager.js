@@ -17,10 +17,22 @@ class HotelManager extends BaseManager {
     }
     
     async getMany(param) {
-		let {page = 0, size = 10, query = {}} = param
+		let {page = 0, size = 100, query = {}} = param
         let result = await this.app.db.Hotel.findAndCountAll({
 			where: query,
 			order: [['created_at', 'DESC']],
+			offset: Number(page) * Number(size),
+			limit: Number(size)
+		});
+		return result;
+    }
+
+    async getProvince(param) {
+		let {page = 0, size = 100, query = {}} = param
+        let result = await this.app.db.Hotel.findAndCountAll({
+            attributes:['province'],
+			where: query,
+            group: 'province',
 			offset: Number(page) * Number(size),
 			limit: Number(size)
 		});

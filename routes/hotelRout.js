@@ -42,4 +42,29 @@ module.exports = app => {
         res.json(result);
     });
 
+    app.get("/api/hotel/delete",async (req, res) => {
+        console.log(req.query)
+        let result = await hotelManager.delete(req.query);
+        if(!!result){
+            res.json({code:20000, state: "success", msg:"删除成功" })
+        }else{
+            res.json({ state:"error", errorMsg:"删除失败" })
+        }
+    });
+
+    app.get("/api/hotel/province",async (req, res) => {
+        let { page, size, _fullname } = req.query;
+        let query = _.pick(req.query, ['mobile']);
+        if (!!_fullname) {
+            query.fullname = { [Op.like]: `%${_fullname}%` }
+        }
+        let param = {
+            page: page,
+            size: size,
+            query: query
+        }
+        let result = await hotelManager.getProvince(param);
+        result.code = 20000
+        res.json(result)
+    });
 };
