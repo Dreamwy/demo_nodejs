@@ -45,12 +45,26 @@ module.exports = app => {
     app.get("/api/hotel/delete",async (req, res) => {
         console.log(req.query)
         let result = await hotelManager.delete(req.query);
+        console.log(result)
         if(!!result){
             res.json({code:20000, state: "success", msg:"删除成功" })
         }else{
             res.json({ state:"error", errorMsg:"删除失败" })
         }
     });
+
+    app.get("/api/hotel/update",async (req, res) => {
+        console.log(req.query)
+        let query = _.pick(req.query, ['id'])
+        let param = _.omit(req.query, ['id'])
+        let result = await hotelManager.update(param,query);
+        if(result[0]>0){
+            res.json({code:20000, state: "success", msg:"修改成功" })
+        }else{
+            res.json({ state:"error", errorMsg:"修改失败" })
+        }
+    });
+
 
     app.get("/api/hotel/province",async (req, res) => {
         let { page, size, _fullname } = req.query;
