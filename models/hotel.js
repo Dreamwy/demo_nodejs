@@ -9,6 +9,8 @@ module.exports = function(sequelize, DataTypes) {
         address :  { type: Sequelize.STRING},
         name :  { type: Sequelize.STRING},
         payway :  { type: Sequelize.INTEGER,defaultValue:1},
+        price :  { type: Sequelize.INTEGER,defaultValue:15},
+        saletime: { type: Sequelize.INTEGER,defaultValue:38},
 		created_at: {
             type: Sequelize.DATE,
             get() {
@@ -35,7 +37,8 @@ module.exports = function(sequelize, DataTypes) {
 		comment: '酒店表',
 		underscored: true,
 		'paranoid': true
-	});
+    });
+    
 	Hotel.associate = function(models) {
         // Hotel.hasMany(models.Device, {foreignKey: 'id'})
 

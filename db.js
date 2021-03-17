@@ -4,6 +4,7 @@ var path = require("path");
 var Sequelize = require("sequelize");
 //var config    = require('../config').database;
 //console.log("into db")
+const util = require('util')
 var db = null;
 module.exports = app => {
 	if (!db) {
@@ -27,6 +28,10 @@ module.exports = app => {
 				db[modelName].associate(db);
 			}
 		});
+
+		sequelize.sync({ alter: true }).then(function(result){
+			// console.log("!!!!!!!"+util.inspect(result))
+		})
 	}
 	return db;
 }
