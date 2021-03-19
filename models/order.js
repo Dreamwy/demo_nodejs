@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
 		id: { type: Sequelize.STRING, primaryKey: true,allowNull: false},
         playerid :  { type: Sequelize.STRING},
         deviceid:  { type: Sequelize.STRING},
-        playerid :  { type: Sequelize.STRING},
+        days:  { type: Sequelize.INTEGER,defaultValue:1},
         content :  { type: Sequelize.STRING},
         status :  { type: Sequelize.STRING},
 		created_at: {

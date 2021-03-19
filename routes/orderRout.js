@@ -1,5 +1,6 @@
 let request = require('request');
 import _ from 'lodash';
+import moment from 'moment';
 let Sequelize = require("sequelize");
 module.exports = app => {
     const {
@@ -29,6 +30,7 @@ module.exports = app => {
             return res.json({ state: "error", errorMsg:"设备id未找到" })
         }else{
             result = await orderManager.getByDeviceId(req.query.deviceid)
+            console.log(result)
             if(!!result){
                 if(result.status == "end"){
                     result = await orderManager.createOrder(req.query);
@@ -47,12 +49,13 @@ module.exports = app => {
                         res.json({ state:"error", errorMsg:"创建订单失败" })
                     }
                 }else{
-                    result = await deviceRecordManager.createDeviceRecord(
+                    let dresult = await deviceRecordManager.createDeviceRecord(
                         {"orderid":result.id,
                         "deviceid":req.query.deviceid,
                         "playerid":req.query.playerid
                     })
-                    if(!!result){
+                    console.log(dresult)
+                    if(!!dresult){
                         res.json({code:20000, state: "success", msg:"创建成功1" })
                     }else{
                         res.json({state: "error", errorMsg:"创建使用记录失败2" })
@@ -72,7 +75,7 @@ module.exports = app => {
                         res.json({state: "error", errorMsg:"创建使用记录失败4" })
                     }
                 }else{
-                    res.json({ state:"error", errorMsg:"创建订单5" })
+                    res.json({ state:"error", errorMsg:"创建订单失败" })
                 }
             }
         }
