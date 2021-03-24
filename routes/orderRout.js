@@ -3,6 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 let Sequelize = require("sequelize");
 module.exports = app => {
+    const Op = Sequelize.Op;
     const {
         userManager,
         deviceManager,
@@ -49,6 +50,12 @@ module.exports = app => {
                         res.json({ state:"error", errorMsg:"创建订单失败" })
                     }
                 }else{
+                    let a = moment().valueOf()
+                    let b = moment(result.created_at).valueOf()
+                    let c = Math.ceil((a-b)/(1000*60*60*24))
+                    if(result.days!=c){
+                        orderManager.update({days:c},{id:result.id})
+                    }
                     let dresult = await deviceRecordManager.createDeviceRecord(
                         {"orderid":result.id,
                         "deviceid":req.query.deviceid,
@@ -82,10 +89,18 @@ module.exports = app => {
     });
 
     app.get("/api/order/list",async (req, res) => {
-        let { page, size, _fullname } = req.query;
-        let query = _.pick(req.query, ['mobile']);
-        if (!!_fullname) {
-            query.fullname = { [Op.like]: `%${_fullname}%` }
+        let { page, size,hotelid,deviceid } = req.query;
+        let query ={}
+        if(!!hotelid){
+            let devices = await deviceManager.getIdsByhotelid(hotelid)
+            let deviceids = []
+            devices.rows.forEach((v, i) => {
+                deviceids[i] = v.id
+            });
+            query = {deviceid:{[Op.or]:deviceids}}
+        }
+        if(!!deviceid){
+            query = {deviceid:deviceid}
         }
         let param = {
             page: page,

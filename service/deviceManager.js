@@ -16,6 +16,17 @@ class DeviceManager extends BaseManager {
 		});
 		return result;
     }
+
+    async getIdsByhotelid(param){
+        let {page = 0, size = 10} = param
+        let result = await this.app.db.Device.findAndCountAll({
+			where: {hotelid:param},
+			order: [['created_at', 'DESC']],
+			offset: Number(page) * Number(size),
+			limit: Number(size)
+		});
+		return result;
+    }
 }
 module.exports = app => {
     return new DeviceManager(app)
