@@ -7,8 +7,12 @@ module.exports = function(sequelize, DataTypes) {
         playerid :  { type: Sequelize.STRING},
         deviceid:  { type: Sequelize.STRING},
         days:  { type: Sequelize.INTEGER,defaultValue:1},
+        totalprice :  { type: Sequelize.FLOAT,defaultValue:0},
+        hotelprice :  { type: Sequelize.FLOAT,defaultValue:0},
+        jdprice :  { type: Sequelize.FLOAT,defaultValue:0},
         content :  { type: Sequelize.STRING},
         status :  { type: Sequelize.STRING},
+        time:{ type: Sequelize.INTEGER,defaultValue:1},
 		created_at: {
             type: Sequelize.DATE,
             get() {
