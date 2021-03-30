@@ -169,4 +169,26 @@ module.exports = app => {
       
     //     next();
     //   });
+
+//     SELECT id,IFNULL(SUM(temp.ordertprice),0),
+// IFNULL(SUM(temp.orderhprice),0),
+// IFNULL(SUM(temp.orderjprice),0) FROM hotel 
+// LEFT JOIN (SELECT device.hotelid as ddhid,
+// device.id as ddid, 
+// `order`.deviceid as orderdid, 
+// `order`.id as orderid,
+// `order`.days as orderdays,
+// `order`.totalprice as ordertprice,
+// `order`.hotelprice as orderhprice,
+// `order`.jdprice as orderjprice
+// FROM device 
+// LEFT JOIN `order` ON device.id = `order`.deviceid) as temp
+// ON hotel.id = temp.ddhid GROUP BY hotel.id
+
+
+// SELECT device.id,
+// IFNULL(SUM(`order`.totalprice),0),
+// IFNULL(SUM(`order`.hotelprice),0),
+// IFNULL(SUM(`order`.jdprice),0) FROM device 
+// LEFT JOIN `order` ON device.id = `order`.deviceid GROUP BY device.id
 }
