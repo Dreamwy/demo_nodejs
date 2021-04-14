@@ -67,7 +67,8 @@
     "shortid": "^2.2.15",
     "winston": "^2.1.1",
     "xml2js": "^0.4.17",
-    "js-shortid": "^0.1.1"
+    "js-shortid": "^0.1.1",
+    "random-mac": "^0.0.5"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",

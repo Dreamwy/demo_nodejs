@@ -1,4 +1,6 @@
 let request = require('request');
+let randomMac = require('random-mac')
+let shortid=require("js-shortid")
 import moment from 'moment';
 import _ from 'lodash';
 import Sequelize from 'sequelize';
@@ -84,6 +86,11 @@ module.exports = app => {
         }else{
             res.json({ state:"error", errorMsg:"用户不存在"});
         }
+    });
+
+    app.get("/api/createmac",async(req,res)=>{
+        res.json({"mac":randomMac('56:80:c7'),"qrcode":shortid.uuid()});
+
     });
 
 
