@@ -12,7 +12,8 @@ module.exports = app => {
     const {
         userManager,
         deviceManager,
-        hotelManager
+        hotelManager,
+        macManager
     } = app.service;
     app.get("/api/user/info",async(req,res)=>{
         let uid = req.query.id;
@@ -89,10 +90,23 @@ module.exports = app => {
     });
 
     app.get("/api/createmac",async(req,res)=>{
-        res.json({"mac":randomMac('56:80:c7'),"qrcode":shortid.uuid()});
-
+        let mac = randomMac('56:80:c7')
+        let result = await macManager.create({"mac":mac,"deviceqrid":mac});
+        if(!!result){
+            res.json(result)
+        }else{
+            res.json({ state:"error", errorMsg:"创建失败" })
+        }
     });
 
+    app.get("/api/getmac",async(req,res)=>{
+        let result = await macManager.getByDeviceqrid(req.query.deviceqrid);
+        if(!!result){
+            res.json(result)
+        }else{
+            res.json({ state:"error", errorMsg:"查询失败" })
+        }
+    });
 
     // "vetur.format.defaultFormatterOptions": {
         
