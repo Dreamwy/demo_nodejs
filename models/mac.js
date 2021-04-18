@@ -5,6 +5,7 @@ module.exports = function(sequelize, DataTypes) {
 		mac: { type: Sequelize.STRING, primaryKey: true,allowNull: false},
 		deviceqrid: { type: Sequelize.STRING},
         deviceqr:  { type: Sequelize.DataTypes.BLOB('medium')},
+        blename:  { type: Sequelize.STRING},
 		installtime: {
             type: Sequelize.DATE,
             get() {

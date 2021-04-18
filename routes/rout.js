@@ -91,7 +91,7 @@ module.exports = app => {
 
     app.get("/api/createmac",async(req,res)=>{
         let mac = randomMac('56:80:c7')
-        let result = await macManager.create({"mac":mac,"deviceqrid":mac});
+        let result = await macManager.create({"mac":mac,"deviceqrid":mac,"blename":mac});
         if(!!result){
             res.json(result)
         }else{
