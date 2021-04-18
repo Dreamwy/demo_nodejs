@@ -93,6 +93,7 @@ module.exports = app => {
         let mac = randomMac('56:80:c7')
         let result = await macManager.create({"mac":mac,"deviceqrid":mac,"blename":mac});
         if(!!result){
+            result.dataValues.code = 20000
             res.json(result)
         }else{
             res.json({ state:"error", errorMsg:"创建失败" })
@@ -100,8 +101,9 @@ module.exports = app => {
     });
 
     app.get("/api/getmac",async(req,res)=>{
-        let result = await macManager.getByDeviceqrid(req.query.deviceqrid);
+        let result = await macManager.getBydeviceqrid(req.query.deviceqrid);
         if(!!result){
+            result.dataValues.code = 20000
             res.json(result)
         }else{
             res.json({ state:"error", errorMsg:"查询失败" })
