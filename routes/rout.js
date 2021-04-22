@@ -25,6 +25,9 @@ module.exports = app => {
         }
         
     });
+    app.get("/api/X6l74ZgM6V.txt",async(req,res)=>{
+        res.send("28c44d439a0135afc5c432b9a059b8d8")
+    });
     app.post("/api/user/create",async (req, res) => {
         let user = _.pick(req.body, ['fullname', 'mobile']);
         let result = await userManager.create(user);
