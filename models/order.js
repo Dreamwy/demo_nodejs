@@ -11,7 +11,8 @@ module.exports = function(sequelize, DataTypes) {
         hotelprice :  { type: Sequelize.FLOAT,defaultValue:0},
         jdprice :  { type: Sequelize.FLOAT,defaultValue:0},
         content :  { type: Sequelize.STRING},
-        status :  { type: Sequelize.STRING},
+        status :  { type:   Sequelize.ENUM,
+            values: ['start', 'end']},
         time:{ type: Sequelize.INTEGER,defaultValue:1},
 		created_at: {
             type: Sequelize.DATE,

@@ -8,8 +8,9 @@ module.exports = app => {
     } = app.service;
     app.get("/api/device/info",async(req,res)=>{
         let uid = req.query.id;
-        let device_info = await deviceManager.getById(uid);
+        let device_info = await deviceManager.getByDeviceId(uid);
         if(!!device_info){
+            device_info.dataValues.code=20000
             res.json(device_info);
         }else{
             res.json({ state:"error", errorMsg:"用户不存在"});

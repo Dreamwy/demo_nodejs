@@ -57,8 +57,8 @@ module.exports = app => {
     app.get("/api/wxlogin",async(req,res)=>{
         let code = req.query.code;
         let url = "https://api.weixin.qq.com/sns/jscode2session";
-        url += "?appid=wxff785bbaf32ceac3";//自己的appid
-        url += "&secret=59b29ca515ccf40c39d89c7d91c76239";//自己的appSecret
+        url += "?appid=wxf65b8896f0bc3450";//自己的appid
+        url += "&secret=349c54e6eaae853f0dde4a8b474a0d3b";//自己的appSecret
         url += "&js_code=" + code;
         request(url, function (error, response, body) {
             if (!error && response.statusCode == 200) {

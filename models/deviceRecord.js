@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
         deviceid: { type: Sequelize.STRING},
         orderid: { type: Sequelize.STRING},
         playerid :  { type: Sequelize.STRING},
-        content:  { type: Sequelize.STRING},
+        content:  { type: Sequelize.INTEGER},
 		installtime: {
             type: Sequelize.DATE,
             get() {

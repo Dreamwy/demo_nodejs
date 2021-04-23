@@ -3,7 +3,8 @@ import moment from 'moment'
 module.exports = function(sequelize, DataTypes) {
 	let Device = sequelize.define("Device", {
 		id: { type: Sequelize.STRING, primaryKey: true,allowNull: false},
-		status: { type: Sequelize.STRING},
+		status: { type:   Sequelize.ENUM,
+                values: ['low', 'running', 'idle']},
         hotelid:  { type: Sequelize.STRING,allowNull: false},
 		room : {type:Sequelize.STRING},
 		installman: { type: Sequelize.STRING },

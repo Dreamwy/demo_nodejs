@@ -16,7 +16,17 @@ class DeviceManager extends BaseManager {
 		});
 		return result;
     }
-
+	async getByDeviceId(id) {
+		let result = await this.app.db.Device.findOne({
+			include:[{model:this.app.db.Hotel}],
+			where: {
+				id: id
+				
+			}
+		})
+		return result;
+	}
+	
     async getIdsByhotelid(param){
         let {page = 0, size = 10} = param
         let result = await this.app.db.Device.findAndCountAll({
