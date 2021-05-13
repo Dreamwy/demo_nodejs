@@ -15,6 +15,20 @@ class DeviceRecordManager extends BaseManager {
 		return result;
     }
     
+	async updateOneByDeviceId(param,did) {
+		let result = await this.model.findOne({
+			where: {
+				deviceid: did
+			}
+		  })
+		   result = await this.model.update(param,{
+			where: {
+				id: result.id
+			}
+		  })
+		  return result;
+	}
+
     async getMany(param) {
 		let {page = 0, size = 10, query = {}} = param
         let result = await this.app.db.DeviceRecord.findAndCountAll({

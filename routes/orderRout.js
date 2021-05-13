@@ -21,6 +21,17 @@ module.exports = app => {
         }
         
     });
+    app.get("/api/order/updatelastrecord",async(req,res)=>{
+        let did = req.query.did;
+        let t = req.query.content;
+        let result = await deviceRecordManager.updateOneByDeviceId({content:t},did);
+        if(result[0]>0){
+            res.json({code:20000, state: "success", msg:"修改成功" })
+        }else{
+            res.json({ state:"error", errorMsg:"修改失败" })
+        }
+        
+    });
     app.get("/api/order/create",async (req, res) => {
         console.log(req.query)
         if(_.isEmpty(req.query.deviceid)){
