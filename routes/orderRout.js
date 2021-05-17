@@ -41,76 +41,123 @@ module.exports = app => {
         let deviceresult = await deviceManager.getById(req.query.deviceid)
         if(deviceresult == null){
             return res.json({ state: "error", errorMsg:"设备id未找到" })
+        }
+        let hotelresult = await hotelManager.getById(deviceresult.hotelid)
+        console.log(hotelresult)
+        if(_.isEmpty(req.query.playerid)){
+            return res.json({ state: "error", errorMsg:"用户id不能为空" })
+        }
+        let orderesult = await orderManager.getByPlayerId(req.query.playerid)
+        if(!!orderesult){
+            let a = moment().valueOf()
+            let b = moment(orderesult.created_at).valueOf()
+            let c = Math.ceil((a-b)/(1000*60*60*24))
+            c=1.2
+            if(c>1){
+                _.merge(param,{"totalprice":hotelresult.price,"time":orderesult.time+1,"hotelprice":hotelresult.price*hotelresult.divide,"jdprice":hotelresult.price*(1-hotelresult.divide)})
+                orderesult = await orderManager.createOrder(param); 
+            }
+            let recordresult = await deviceRecordManager.createDeviceRecord(
+                {"orderid":orderesult.id,
+                "deviceid":req.query.deviceid,
+                "playerid":req.query.playerid
+            })
+            console.log(recordresult)
+            if(!!recordresult){
+                res.json({code:20000, state: "success", msg:"创建成功1" })
+            }else{
+                res.json({state: "error", errorMsg:"创建使用记录失败2" })
+            }
         }else{
-            let hotelresult = await hotelManager.getById(deviceresult.hotelid)
-            console.log(hotelresult)
-            let orderesult = await orderManager.getByDeviceId(req.query.deviceid)
-            console.log(orderesult)
+            _.merge(param,{"totalprice":hotelresult.price/2,"time":1,"hotelprice":(hotelresult.price/2)*hotelresult.divide,"jdprice":(hotelresult.price/2)*(1-hotelresult.divide)})
+            orderesult = await orderManager.createOrder(param);
             if(!!orderesult){
-                if(orderesult.status == "end"){
-                    let time  = orderesult.time+1
-                    if(time > hotelresult.saletime){
-                        _.merge(param,{"totalprice":hotelresult.price,"time":time,"hotelprice":hotelresult.price*0.8,"jdprice":hotelresult.price*0.2})
-                    }else{
-                        _.merge(param,{"totalprice":hotelresult.price,"time":time,"hotelprice":hotelresult.price*0.2,"jdprice":hotelresult.price*0.8})
-                    }
-                    orderesult = await orderManager.createOrder(param);
-                    if(!!orderesult){
-                        let recordresult = await deviceRecordManager.createDeviceRecord(
-                            {"orderid":orderesult.id,
-                            "deviceid":req.query.deviceid,
-                            "playerid":req.query.playerid
-                        })
-                        if(!!recordresult){
-                            res.json({code:20000, state: "success", msg:"创建成功" })
-                        }else{
-                            res.json({state: "error", errorMsg:"创建使用记录失败" })
-                        }
-                    }else{
-                        res.json({ state:"error", errorMsg:"创建订单失败" })
-                    }
+                var recordresult = await deviceRecordManager.createDeviceRecord(
+                    {"orderid":orderesult.id,
+                    "deviceid":param.deviceid,
+                    "playerid":param.playerid
+                })
+                if(!!recordresult){
+                    res.json({code:20000, state: "success", msg:"创建成功3" })
                 }else{
-                    let a = moment().valueOf()
-                    let b = moment(orderesult.created_at).valueOf()
-                    let c = Math.ceil((a-b)/(1000*60*60*24))
-                    if(orderesult.days!=c){
-                        if(orderesult.time > hotelresult.saletime){
-                            orderManager.update({days:c,"totalprice":hotelresult.price*c,"hotelprice":hotelresult.price*0.8*c,"jdprice":hotelresult.price*0.2*c},{id:orderesult.id})
-                        }else{
-                            orderManager.update({days:c,"totalprice":hotelresult.price*c,"hotelprice":hotelresult.price*0.2*c,"jdprice":hotelresult.price*0.8*c},{id:orderesult.id})
-                        }
-                    }
-                    let recordresult = await deviceRecordManager.createDeviceRecord(
-                        {"orderid":orderesult.id,
-                        "deviceid":req.query.deviceid,
-                        "playerid":req.query.playerid
-                    })
-                    console.log(recordresult)
-                    if(!!recordresult){
-                        res.json({code:20000, state: "success", msg:"创建成功1" })
-                    }else{
-                        res.json({state: "error", errorMsg:"创建使用记录失败2" })
-                    }
+                    res.json({state: "error", errorMsg:"创建使用记录失败4" })
                 }
             }else{
-                _.merge(param,{"totalprice":hotelresult.price,"time":1,"hotelprice":hotelresult.price*0.2,"jdprice":hotelresult.price*0.8})
-                let orderesult = await orderManager.createOrder(param);
-                if(!!orderesult){
-                    var recordresult = await deviceRecordManager.createDeviceRecord(
-                        {"orderid":orderesult.id,
-                        "deviceid":param.deviceid,
-                        "playerid":param.playerid
-                    })
-                    if(!!recordresult){
-                        res.json({code:20000, state: "success", msg:"创建成功3" })
-                    }else{
-                        res.json({state: "error", errorMsg:"创建使用记录失败4" })
-                    }
-                }else{
-                    res.json({ state:"error", errorMsg:"创建订单失败" })
-                }
+                res.json({ state:"error", errorMsg:"创建订单失败" })
             }
         }
+
+
+
+
+
+            // let orderesult = await orderManager.getByDeviceId(req.query.deviceid)
+            // console.log(orderesult)
+            // if(!!orderesult){
+            //     if(orderesult.status == "end"){
+            //         let time  = orderesult.time+1
+            //         if(time > hotelresult.saletime){
+            //             _.merge(param,{"totalprice":hotelresult.price,"time":time,"hotelprice":hotelresult.price*0.8,"jdprice":hotelresult.price*0.2})
+            //         }else{
+            //             _.merge(param,{"totalprice":hotelresult.price,"time":time,"hotelprice":hotelresult.price*0.2,"jdprice":hotelresult.price*0.8})
+            //         }
+            //         orderesult = await orderManager.createOrder(param);
+            //         if(!!orderesult){
+            //             let recordresult = await deviceRecordManager.createDeviceRecord(
+            //                 {"orderid":orderesult.id,
+            //                 "deviceid":req.query.deviceid,
+            //                 "playerid":req.query.playerid
+            //             })
+            //             if(!!recordresult){
+            //                 res.json({code:20000, state: "success", msg:"创建成功" })
+            //             }else{
+            //                 res.json({state: "error", errorMsg:"创建使用记录失败" })
+            //             }
+            //         }else{
+            //             res.json({ state:"error", errorMsg:"创建订单失败" })
+            //         }
+            //     }else{
+            //         let a = moment().valueOf()
+            //         let b = moment(orderesult.created_at).valueOf()
+            //         let c = Math.ceil((a-b)/(1000*60*60*24))
+            //         if(orderesult.days!=c){
+            //             if(orderesult.time > hotelresult.saletime){
+            //                 orderManager.update({days:c,"totalprice":hotelresult.price*c,"hotelprice":hotelresult.price*0.8*c,"jdprice":hotelresult.price*0.2*c},{id:orderesult.id})
+            //             }else{
+            //                 orderManager.update({days:c,"totalprice":hotelresult.price*c,"hotelprice":hotelresult.price*0.2*c,"jdprice":hotelresult.price*0.8*c},{id:orderesult.id})
+            //             }
+            //         }
+            //         let recordresult = await deviceRecordManager.createDeviceRecord(
+            //             {"orderid":orderesult.id,
+            //             "deviceid":req.query.deviceid,
+            //             "playerid":req.query.playerid
+            //         })
+            //         console.log(recordresult)
+            //         if(!!recordresult){
+            //             res.json({code:20000, state: "success", msg:"创建成功1" })
+            //         }else{
+            //             res.json({state: "error", errorMsg:"创建使用记录失败2" })
+            //         }
+            //     }
+            // }else{
+            //     _.merge(param,{"totalprice":hotelresult.price,"time":1,"hotelprice":hotelresult.price*0.2,"jdprice":hotelresult.price*0.8})
+            //     let orderesult = await orderManager.createOrder(param);
+            //     if(!!orderesult){
+            //         var recordresult = await deviceRecordManager.createDeviceRecord(
+            //             {"orderid":orderesult.id,
+            //             "deviceid":param.deviceid,
+            //             "playerid":param.playerid
+            //         })
+            //         if(!!recordresult){
+            //             res.json({code:20000, state: "success", msg:"创建成功3" })
+            //         }else{
+            //             res.json({state: "error", errorMsg:"创建使用记录失败4" })
+            //         }
+            //     }else{
+            //         res.json({ state:"error", errorMsg:"创建订单失败" })
+            //     }
+            // }
+        
     });
 
     app.get("/api/order/list",async (req, res) => {

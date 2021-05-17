@@ -11,6 +11,7 @@ module.exports = function(sequelize, DataTypes) {
         payway :  { type: Sequelize.INTEGER,defaultValue:1},
         price :  { type: Sequelize.INTEGER,defaultValue:15},
         saletime: { type: Sequelize.INTEGER,defaultValue:38},
+        divide: { type: Sequelize.FLOAT,defaultValue:0.4},
 		created_at: {
             type: Sequelize.DATE,
             get() {
