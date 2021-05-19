@@ -19,7 +19,8 @@ class DeviceRecordManager extends BaseManager {
 		let result = await this.model.findOne({
 			where: {
 				deviceid: did
-			}
+			},
+          	order: [['created_at', 'DESC']],
 		  })
 		   result = await this.model.update(param,{
 			where: {

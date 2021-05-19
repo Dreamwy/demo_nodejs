@@ -2,6 +2,17 @@ let request = require('request');
 import _ from 'lodash';
 import moment from 'moment';
 let Sequelize = require("sequelize");
+const tenpay = require('tenpay');
+const config = {
+  appid: 'wxf65b8896f0bc3450',
+  mchid: '1609182701',
+  partnerKey: 'XiaoXiang2021Bjjdkjxiaoxiangxxxx',
+//   pfx: require('fs').readFileSync('apiclient_cert.pem')
+  notify_url: 'https://www.anane.net.cn/api/wxpay/notify',
+//   spbill_create_ip: 'IP地址'
+};
+const payapi = new tenpay(config, true);
+
 module.exports = app => {
     const Op = Sequelize.Op;
     const {
@@ -32,6 +43,37 @@ module.exports = app => {
         }
         
     });
+
+    app.get("/api/order/wxpay",async(req,res)=>{
+        let result = await payapi.getPayParams({
+            out_trade_no: new Date().getTime(),
+            body: '搓背机',
+            total_fee: '1',
+            openid: req.query.openid,
+          });
+          console.log(result)
+        res.json(result)
+    });
+
+    // // 支付结果通知/退款结果通知
+    app.post('/api/wxpay/notify', payapi.middlewareForExpress('pay'), (req, res) => {
+        let info = req.weixin;
+    
+        // 业务逻辑...
+    
+        // 回复消息(参数为空回复成功, 传值则为错误消息)
+        console.log(info)
+    });
+    
+    // // 扫码支付模式一回调
+    // app.post('/api/wxpay/qrcode', payapi.middlewareForExpress('nativePay'), (req, res) => {
+    //     let info = req.weixin;
+    
+    //     // 业务逻辑和统一下单获取prepay_id...
+    
+    //     // 响应成功或失败(第二个可选参数为输出错误信息)
+    //     console.log(info)
+    // });
     app.get("/api/order/create",async (req, res) => {
         console.log(req.query)
         if(_.isEmpty(req.query.deviceid)){

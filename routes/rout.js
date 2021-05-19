@@ -67,6 +67,20 @@ module.exports = app => {
             }
           });
     });
+
+    app.get("/api/wxshop",async(req,res)=>{
+        let code = req.query.code;
+        let url = "https://api.weixin.qq.com/sns/jscode2session";
+        url += "?appid=wxf65b8896f0bc3450";//自己的appid
+        url += "&secret=349c54e6eaae853f0dde4a8b474a0d3b";//自己的appSecret
+        url += "&js_code=" + code;
+        request(url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+              console.log(body) // 请求成功的处理逻辑，注意body是json字符串
+              res.send(body)
+            }
+          });
+    });
     
     app.get("/api/allcount",async(req,res)=>{ 
         let start = req.query.start
