@@ -31,8 +31,10 @@ module.exports = app => {
 			maxAge: "364d"
 		})
 	);
+
+    app.use(bodyParser.text({type: '*/xml'}));
 	app.use(`/assets/be/${pjson.name}`,express.static(__dirname + "/../assets", {
 		maxAge: "364d"
 	}));
-	app.use(bodyParser.json());
+	// app.use(bodyParser.json());
 };

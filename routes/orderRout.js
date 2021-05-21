@@ -54,15 +54,18 @@ module.exports = app => {
           console.log(result)
         res.json(result)
     });
-
+    
     // // 支付结果通知/退款结果通知
     app.post('/api/wxpay/notify', payapi.middlewareForExpress('pay'), (req, res) => {
+        console.log('/api/wxpay/notify')
+        
         let info = req.weixin;
     
         // 业务逻辑...
     
         // 回复消息(参数为空回复成功, 传值则为错误消息)
         console.log(info)
+        res.reply('错误消息' || '');
     });
     
     // // 扫码支付模式一回调
