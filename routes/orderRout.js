@@ -3,6 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 let Sequelize = require("sequelize");
 const tenpay = require('tenpay');
+let shortid=require("js-shortid");
 const config = {
   appid: 'wxf65b8896f0bc3450',
   mchid: '1609182701',
@@ -20,7 +21,8 @@ module.exports = app => {
         deviceManager,
         deviceRecordManager,
         hotelManager,
-        orderManager
+        orderManager,
+        wxOrderManager
     } = app.service;
     app.get("/api/order/info",async(req,res)=>{
         let uid = req.query.id;
@@ -50,19 +52,20 @@ module.exports = app => {
             body: '搓背机',
             total_fee: '1',
             openid: req.query.openid,
+            attach:shortid.uuid()
           });
           console.log(result)
         res.json(result)
     });
     
     // // 支付结果通知/退款结果通知
-    app.post('/api/wxpay/notify', payapi.middlewareForExpress('pay'), (req, res) => {
+    app.post('/api/wxpay/notify',payapi.middlewareForExpress('pay'),async  (req, res) => {
         console.log('/api/wxpay/notify')
         
         let info = req.weixin;
-    
+        let result = await wxOrderManager.create(info)
         // 业务逻辑...
-    
+        
         // 回复消息(参数为空回复成功, 传值则为错误消息)
         console.log(info)
         res.reply('错误消息' || '');
@@ -77,6 +80,26 @@ module.exports = app => {
     //     // 响应成功或失败(第二个可选参数为输出错误信息)
     //     console.log(info)
     // });
+    // {
+    //     appid: 'wxf65b8896f0bc3450',
+    //     attach: '2QpWXg3izXyrhT3',
+    //     bank_type: 'OTHERS',
+    //     cash_fee: '1',
+    //     fee_type: 'CNY',
+    //     is_subscribe: 'N',
+    //     mch_id: '1609182701',
+    //     nonce_str: 'lwbzaooTrqW5vrmi',
+    //     openid: 'oT7LH5KQrY0eluHiHZOnsP9B060o',
+    //     out_trade_no: '1621955637647',
+    //     result_code: 'SUCCESS',
+    //     return_code: 'SUCCESS',
+    //     sign: '7574EE791F8CA991317B8A1313FC5E15',
+    //     time_end: '20210525231421',
+    //     total_fee: '1',
+    //     trade_type: 'JSAPI',
+    //     transaction_id: '4200001041202105259992030163'
+    //   } 
+
     app.get("/api/order/create",async (req, res) => {
         console.log(req.query)
         if(_.isEmpty(req.query.deviceid)){

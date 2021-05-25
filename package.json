@@ -67,9 +67,9 @@
     "request-promise": "^4.2.2",
     "sequelize": "^5.7.0",
     "shortid": "^2.2.15",
+    "tenpay": "^2.1.18",
     "winston": "^2.1.1",
-    "xml2js": "^0.4.17",
-    "tenpay": "^2.1.18"
+    "xml2js": "^0.4.17"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",

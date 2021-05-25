@@ -118,6 +118,7 @@ module.exports = app => {
     });
 
     app.get("/api/getmac",async(req,res)=>{
+        console.log("getmac",req.query)
         let result = await macManager.getBydeviceqrid(req.query.deviceqrid);
         if(!!result){
             result.dataValues.code = 20000

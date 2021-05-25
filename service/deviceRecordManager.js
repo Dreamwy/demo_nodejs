@@ -16,17 +16,20 @@ class DeviceRecordManager extends BaseManager {
     }
     
 	async updateOneByDeviceId(param,did) {
-		let result = await this.model.findOne({
+		let result = await this.model.findAll({
 			where: {
 				deviceid: did
 			},
           	order: [['created_at', 'DESC']],
+			limit:2
 		  })
-		   result = await this.model.update(param,{
-			where: {
-				id: result.id
-			}
-		  })
+		  if(result.length==2){
+			result = await this.model.update(param,{
+				where: {
+					id: result[1].id
+				}
+			  })
+		  }
 		  return result;
 	}
 
