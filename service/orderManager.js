@@ -37,6 +37,17 @@ class OrderManager extends BaseManager {
       })
       return result;
     }
+    async getByPlayeridandDeviceid(playerid,deviceid) {
+      let result = await this.app.db.Order.findOne({
+        where: {
+          playerid: playerid,
+          deviceid: deviceid
+          
+        },
+        order: [['created_at', 'DESC']],
+      })
+      return result;
+    }
  
     
     async getByDeviceId(id) {

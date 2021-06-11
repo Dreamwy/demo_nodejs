@@ -45,6 +45,21 @@ module.exports = app => {
         
     });
 
+    app.get("/api/order/createrecord",async(req,res)=>{
+        let recordresult = await deviceRecordManager.createDeviceRecord(
+            {"orderid":req.query.orderid,
+            "deviceid":req.query.deviceid,
+            "playerid":req.query.playerid
+        })
+        if(!!recordresult){
+            res.json({code:20000, state: "success" })
+        }else{
+            res.json({state: "error", errorMsg:"创建使用记录失败" })
+        }
+    });
+
+
+
     app.get("/api/order/wxpay",async(req,res)=>{
         let result = await payapi.getPayParams({
             out_trade_no: new Date().getTime(),
@@ -97,8 +112,31 @@ module.exports = app => {
     //     // 响应成功或失败(第二个可选参数为输出错误信息)
     //     console.log(info)
     // });
+
+    app.get("/api/order/check",async(req,res)=>{
+        if(_.isEmpty(req.query.deviceid)){
+            return res.json({ state: "error", errorMsg:"设备id不能为空" })
+        }
+        if(_.isEmpty(req.query.playerid)){
+            return res.json({ state: "error", errorMsg:"用户id不能为空" })
+        }
+        let orderesult = await orderManager.getByPlayeridandDeviceid(req.query.playerid,req.query.deviceid)
+        if(!!orderesult){
+            let a = moment().valueOf()
+            let b = moment(orderesult.created_at).valueOf()
+            let c = Math.ceil((a-b)/(1000*60*60*24))
+            if(c>1){
+                res.json({state: "error", errorMsg:"没有订单1" })
+            }else{
+                res.json({code:20000, state: "success", order:orderesult })
+            }
+        }else{
+            res.json({state: "error", errorMsg:"没有订单2" })
+        }
+    });
+
+
     app.get("/api/order/create",async (req, res) => {
-        console.log("!!!!!!!!~~"+req.query)
         if(_.isEmpty(req.query.deviceid)){
             return res.json({ state: "error", errorMsg:"设备id不能为空" })
         }
@@ -108,11 +146,10 @@ module.exports = app => {
             return res.json({ state: "error", errorMsg:"设备id未找到" })
         }
         let hotelresult = await hotelManager.getById(deviceresult.hotelid)
-        console.log(hotelresult)
         if(_.isEmpty(req.query.playerid)){
             return res.json({ state: "error", errorMsg:"用户id不能为空" })
         }
-        let orderesult = await orderManager.getByPlayerId(req.query.playerid)
+        let orderesult = await orderManager.getByPlayeridandDeviceid(req.query.playerid,req.query.deviceid)
         if(!!orderesult){
             let a = moment().valueOf()
             let b = moment(orderesult.created_at).valueOf()
@@ -121,31 +158,32 @@ module.exports = app => {
                 _.merge(param,{"totalprice":hotelresult.price,"time":orderesult.time+1,"hotelprice":hotelresult.price*hotelresult.divide,"jdprice":hotelresult.price*(1-hotelresult.divide)})
                 orderesult = await orderManager.createOrder(param); 
             }
-            let recordresult = await deviceRecordManager.createDeviceRecord(
-                {"orderid":orderesult.id,
-                "deviceid":req.query.deviceid,
-                "playerid":req.query.playerid
-            })
-            console.log(recordresult)
-            if(!!recordresult){
-                res.json({code:20000, state: "success", order:orderesult })
-            }else{
-                res.json({state: "error", errorMsg:"创建使用记录失败2" })
-            }
+            res.json({code:20000, state: "success", order:orderesult })
+            // let recordresult = await deviceRecordManager.createDeviceRecord(
+            //     {"orderid":orderesult.id,
+            //     "deviceid":req.query.deviceid,
+            //     "playerid":req.query.playerid
+            // })
+            // if(!!recordresult){
+            //     res.json({code:20000, state: "success", order:orderesult })
+            // }else{
+            //     res.json({state: "error", errorMsg:"创建使用记录失败2" })
+            // }
         }else{
             _.merge(param,{"totalprice":hotelresult.price/2,"time":1,"hotelprice":(hotelresult.price/2)*hotelresult.divide,"jdprice":(hotelresult.price/2)*(1-hotelresult.divide)})
             orderesult = await orderManager.createOrder(param);
             if(!!orderesult){
-                var recordresult = await deviceRecordManager.createDeviceRecord(
-                    {"orderid":orderesult.id,
-                    "deviceid":param.deviceid,
-                    "playerid":param.playerid
-                })
-                if(!!recordresult){
-                    res.json({code:20000, state: "success", order:orderesult })
-                }else{
-                    res.json({state: "error", errorMsg:"创建使用记录失败4" })
-                }
+                res.json({code:20000, state: "success", order:orderesult })
+                // var recordresult = await deviceRecordManager.createDeviceRecord(
+                //     {"orderid":orderesult.id,
+                //     "deviceid":param.deviceid,
+                //     "playerid":param.playerid
+                // })
+                // if(!!recordresult){
+                //     res.json({code:20000, state: "success", order:orderesult })
+                // }else{
+                //     res.json({state: "error", errorMsg:"创建使用记录失败4" })
+                // }
             }else{
                 res.json({ state:"error", errorMsg:"创建订单失败" })
             }
