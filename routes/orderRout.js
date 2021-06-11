@@ -66,6 +66,7 @@ module.exports = app => {
             body: '搓背机',
             total_fee: '1',
             openid: req.query.openid,
+            attach:req.query.attach
           });
           console.log(result)
         res.json(result)

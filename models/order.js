@@ -6,6 +6,7 @@ module.exports = function(sequelize, DataTypes) {
 		id: { type: Sequelize.STRING, primaryKey: true,allowNull: false},
         playerid :  { type: Sequelize.STRING},
         deviceid:  { type: Sequelize.STRING},
+        wxorder:{ type: Sequelize.STRING},
         days:  { type: Sequelize.INTEGER,defaultValue:1},
         totalprice :  { type: Sequelize.FLOAT,defaultValue:0},
         hotelprice :  { type: Sequelize.FLOAT,defaultValue:0},
