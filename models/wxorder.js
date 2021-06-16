@@ -38,7 +38,28 @@ module.exports = function(sequelize, DataTypes) {
         openid :  { type: Sequelize.STRING},
         out_trade_no :  { type: Sequelize.STRING},
         nonce_str :  { type: Sequelize.STRING},
-        attach :  { type: Sequelize.STRING}
+        attach :  { type: Sequelize.STRING},
+        created_at: {
+            type: Sequelize.DATE,
+            get() {
+                let time = this.getDataValue('created_at')
+                return !time?null:moment(time).format('YYYY-MM-DD HH:mm:ss');
+            }
+        },
+        deleted_at:{
+            type: Sequelize.DATE,
+            get() {
+                let time = this.getDataValue('deleted_at')
+                return !time?null:moment(time).format('YYYY-MM-DD HH:mm:ss');
+            }
+        },
+        updated_at:{
+            type: Sequelize.DATE,
+            get() {
+                let time = this.getDataValue('updated_at')
+                return !time?null:moment(time).format('YYYY-MM-DD HH:mm:ss');
+            }
+        }
 	}, {
 		tableName: 'wxorder',
 		comment: '微信订单表',

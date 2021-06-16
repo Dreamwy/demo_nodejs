@@ -3,6 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 let Sequelize = require("sequelize");
 const tenpay = require('tenpay');
+let shortid=require("js-shortid");
 const config = {
   appid: 'wxf65b8896f0bc3450',
   mchid: '1609182701',
@@ -61,13 +62,15 @@ module.exports = app => {
 
 
     app.get("/api/order/wxpay",async(req,res)=>{
+        let out_trade_no = shortid.gen()
         let result = await payapi.getPayParams({
-            out_trade_no: new Date().getTime(),
+            out_trade_no: out_trade_no,
             body: '搓背机',
             total_fee: '1',
             openid: req.query.openid,
             attach:req.query.attach
           });
+          result.out_trade_no = out_trade_no
           console.log(result)
         res.json(result)
     });
@@ -135,6 +138,29 @@ module.exports = app => {
             res.json({state: "error", errorMsg:"没有订单2" })
         }
     });
+
+    app.get("/api/order/checkwx",async(req,res)=>{
+        if(_.isEmpty(req.query.deviceid)){
+            return res.json({ state: "error", errorMsg:"设备id不能为空" })
+        }
+        if(_.isEmpty(req.query.playerid)){
+            return res.json({ state: "error", errorMsg:"用户id不能为空" })
+        }
+        let orderesult = await wxOrderManager.getByPlayeridandDeviceid(req.query.playerid,req.query.deviceid)
+        if(!!orderesult){
+            let a = moment().valueOf()
+            let b = moment(orderesult.created_at).valueOf()
+            let c = Math.ceil((a-b)/(1000*60*60*24))
+            if(c>1){
+                res.json({state: "error", errorMsg:"没有订单1" })
+            }else{
+                res.json({code:20000, state: "success", order:orderesult })
+            }
+        }else{
+            res.json({state: "error", errorMsg:"没有订单2" })
+        }
+    });
+
 
 
     app.get("/api/order/create",async (req, res) => {
