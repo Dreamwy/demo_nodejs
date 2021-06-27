@@ -135,7 +135,7 @@ module.exports = app => {
                 res.json({code:20000, state: "success", order:orderesult })
             }
         }else{
-            res.json({state: "error", errorMsg:"没有订单2" })
+            res.json({code:20001,first:true})
         }
     });
 
@@ -157,7 +157,7 @@ module.exports = app => {
                 res.json({code:20000, state: "success", order:orderesult })
             }
         }else{
-            res.json({state: "error", errorMsg:"没有订单2" })
+            res.json({code:20001,first:true})
         }
     });
 
