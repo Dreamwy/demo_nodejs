@@ -9,6 +9,7 @@ module.exports = function(sequelize, DataTypes) {
         wxorder:{ type: Sequelize.STRING},
         days:  { type: Sequelize.INTEGER,defaultValue:1},
         totalprice :  { type: Sequelize.FLOAT,defaultValue:0},
+        realprice :  { type: Sequelize.FLOAT,defaultValue:0},
         hotelprice :  { type: Sequelize.FLOAT,defaultValue:0},
         jdprice :  { type: Sequelize.FLOAT,defaultValue:0},
         content :  { type: Sequelize.STRING},

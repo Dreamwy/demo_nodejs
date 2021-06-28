@@ -135,7 +135,13 @@ module.exports = app => {
                 res.json({code:20000, state: "success", order:orderesult })
             }
         }else{
-            res.json({code:20001,first:true})
+            let r = await orderManager.getByPlayerId(req.query.playerid)
+            if(!!r){
+                res.json({code:20001,first:true})
+            }else{
+                res.json({state: "error", errorMsg:"没有订单2" })
+            }
+            
         }
     });
 
@@ -157,7 +163,13 @@ module.exports = app => {
                 res.json({code:20000, state: "success", order:orderesult })
             }
         }else{
-            res.json({code:20001,first:true})
+            let r = await wxOrderManager.getByPlayerId(req.query.playerid)
+            if(!!r){
+                res.json({code:20001,first:true})
+            }else{
+                res.json({state: "error", errorMsg:"没有订单2" })
+            }
+        
         }
     });
 
@@ -176,13 +188,16 @@ module.exports = app => {
         if(_.isEmpty(req.query.playerid)){
             return res.json({ state: "error", errorMsg:"用户id不能为空" })
         }
+        if(_.isEmpty(req.query.realprice)){
+            req.query.realprice = 0
+        }
         let orderesult = await orderManager.getByPlayeridandDeviceid(req.query.playerid,req.query.deviceid)
         if(!!orderesult){
             let a = moment().valueOf()
             let b = moment(orderesult.created_at).valueOf()
             let c = Math.ceil((a-b)/(1000*60*60*24))
             if(c>1){
-                _.merge(param,{"totalprice":hotelresult.price,"time":orderesult.time+1,"hotelprice":hotelresult.price*hotelresult.divide,"jdprice":hotelresult.price*(1-hotelresult.divide)})
+                _.merge(param,{"totalprice":hotelresult.price,"time":orderesult.time+1,"hotelprice":req.query.realprice*hotelresult.divide,"jdprice":req.query.realprice*(1-hotelresult.divide),"realprice":req.query.realprice})
                 orderesult = await orderManager.createOrder(param); 
             }
             res.json({code:20000, state: "success", order:orderesult })
@@ -197,7 +212,7 @@ module.exports = app => {
             //     res.json({state: "error", errorMsg:"创建使用记录失败2" })
             // }
         }else{
-            _.merge(param,{"totalprice":hotelresult.price/2,"time":1,"hotelprice":(hotelresult.price/2)*hotelresult.divide,"jdprice":(hotelresult.price/2)*(1-hotelresult.divide)})
+            _.merge(param,{"totalprice":hotelresult.price,"time":1,"hotelprice":(req.query.realprice)*hotelresult.divide,"jdprice":(req.query.realprice)*(1-hotelresult.divide),"realprice":req.query.realprice})
             orderesult = await orderManager.createOrder(param);
             if(!!orderesult){
                 res.json({code:20000, state: "success", order:orderesult })
