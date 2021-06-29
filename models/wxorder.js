@@ -36,6 +36,7 @@ module.exports = function(sequelize, DataTypes) {
         result_code :  { type: Sequelize.STRING},
         return_code :  { type: Sequelize.STRING},
         openid :  { type: Sequelize.STRING},
+        deviceid :  { type: Sequelize.STRING},
         out_trade_no :  { type: Sequelize.STRING},
         nonce_str :  { type: Sequelize.STRING},
         attach :  { type: Sequelize.STRING},

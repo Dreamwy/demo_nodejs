@@ -14,6 +14,7 @@ const config = {
 };
 const payapi = new tenpay(config, true);
 
+
 module.exports = app => {
     const Op = Sequelize.Op;
     const {
@@ -24,6 +25,70 @@ module.exports = app => {
         orderManager,
         wxOrderManager
     } = app.service;
+    async function createorder(req,res){
+        if(_.isEmpty(req.query.deviceid)){
+            return res.json({ state: "error", errorMsg:"设备id不能为空" })
+        }
+        let param = req.query
+        let deviceresult = await deviceManager.getById(req.query.deviceid)
+        if(deviceresult == null){
+            return res.json({ state: "error", errorMsg:"设备id未找到" })
+        }
+        let hotelresult = await hotelManager.getById(deviceresult.hotelid)
+        if(_.isEmpty(req.query.playerid)){
+            return res.json({ state: "error", errorMsg:"用户id不能为空" })
+        }
+        if(_.isEmpty(req.query.realprice)){
+            req.query.realprice = 0
+        }
+        let orderesult = await orderManager.getByPlayeridandDeviceid(req.query.playerid,req.query.deviceid)
+        if(!!orderesult){
+            let a = moment().valueOf()
+            let b = moment(orderesult.created_at).valueOf()
+            let c = Math.ceil((a-b)/(1000*60*60*24))
+            if(c>1){
+                _.merge(param,{"totalprice":hotelresult.price,"time":orderesult.time+1,"hotelprice":req.query.realprice*hotelresult.divide,"jdprice":req.query.realprice*(1-hotelresult.divide),"realprice":req.query.realprice})
+                orderesult = await orderManager.createOrder(param); 
+            }
+            res.json({code:20000, state: "success", order:orderesult })
+            // let recordresult = await deviceRecordManager.createDeviceRecord(
+            //     {"orderid":orderesult.id,
+            //     "deviceid":req.query.deviceid,
+            //     "playerid":req.query.playerid
+            // })
+            // if(!!recordresult){
+            //     res.json({code:20000, state: "success", order:orderesult })
+            // }else{
+            //     res.json({state: "error", errorMsg:"创建使用记录失败2" })
+            // }
+        }else{
+            let r = await orderManager.getByPlayerId(req.query.playerid)
+            if(!!r){
+                _.merge(param,{"totalprice":hotelresult.price,"time":r.time+1,"hotelprice":(req.query.realprice)*hotelresult.divide,"jdprice":(req.query.realprice)*(1-hotelresult.divide),"realprice":req.query.realprice})
+            }else{
+                _.merge(param,{"totalprice":hotelresult.price,"time":1,"hotelprice":(req.query.realprice)*hotelresult.divide,"jdprice":(req.query.realprice)*(1-hotelresult.divide),"realprice":req.query.realprice})
+    
+            }
+            orderesult = await orderManager.createOrder(param);
+            if(!!orderesult){
+                res.json({code:20000, state: "success", order:orderesult })
+                // var recordresult = await deviceRecordManager.createDeviceRecord(
+                //     {"orderid":orderesult.id,
+                //     "deviceid":param.deviceid,
+                //     "playerid":param.playerid
+                // })
+                // if(!!recordresult){
+                //     res.json({code:20000, state: "success", order:orderesult })
+                // }else{
+                //     res.json({state: "error", errorMsg:"创建使用记录失败4" })
+                // }
+            }else{
+                res.json({ state:"error", errorMsg:"创建订单失败" })
+            }
+        }
+    
+    }
+    
     app.get("/api/order/info",async(req,res)=>{
         let uid = req.query.id;
         let user_info = await orderManager.getById(uid);
@@ -66,6 +131,7 @@ module.exports = app => {
         let result = await payapi.getPayParams({
             out_trade_no: out_trade_no,
             body: '搓背机',
+            // total_fee:req.query.realprice,
             total_fee: '1',
             openid: req.query.openid,
             attach:req.query.attach
@@ -101,10 +167,11 @@ module.exports = app => {
         //   }
         // 业务逻辑...
         await wxOrderManager.create(info)
-
+        let r = {"query":{"deviceid":info.attach,"playerid":info.openid,"realprice":info.total_fee/100,"wxorder":info.out_trade_no}}
+        await createorder(r,res)
         // 回复消息(参数为空回复成功, 传值则为错误消息)
         console.log(info)
-        res.reply('错误消息' || '');
+        // res.reply('错误消息' || '');
     });
     
     // // 扫码支付模式一回调
@@ -137,9 +204,9 @@ module.exports = app => {
         }else{
             let r = await orderManager.getByPlayerId(req.query.playerid)
             if(!!r){
-                res.json({code:20001,first:true})
+                res.json({state: "error", errorMsg:"is not first" })
             }else{
-                res.json({state: "error", errorMsg:"没有订单2" })
+                res.json({code:20001,first:true})
             }
             
         }
@@ -165,9 +232,9 @@ module.exports = app => {
         }else{
             let r = await wxOrderManager.getByPlayerId(req.query.playerid)
             if(!!r){
-                res.json({code:20001,first:true})
+                res.json({state: "error", errorMsg:"is not first" })
             }else{
-                res.json({state: "error", errorMsg:"没有订单2" })
+                res.json({code:20001,first:true})
             }
         
         }
@@ -176,64 +243,7 @@ module.exports = app => {
 
 
     app.get("/api/order/create",async (req, res) => {
-        if(_.isEmpty(req.query.deviceid)){
-            return res.json({ state: "error", errorMsg:"设备id不能为空" })
-        }
-        let param = req.query
-        let deviceresult = await deviceManager.getById(req.query.deviceid)
-        if(deviceresult == null){
-            return res.json({ state: "error", errorMsg:"设备id未找到" })
-        }
-        let hotelresult = await hotelManager.getById(deviceresult.hotelid)
-        if(_.isEmpty(req.query.playerid)){
-            return res.json({ state: "error", errorMsg:"用户id不能为空" })
-        }
-        if(_.isEmpty(req.query.realprice)){
-            req.query.realprice = 0
-        }
-        let orderesult = await orderManager.getByPlayeridandDeviceid(req.query.playerid,req.query.deviceid)
-        if(!!orderesult){
-            let a = moment().valueOf()
-            let b = moment(orderesult.created_at).valueOf()
-            let c = Math.ceil((a-b)/(1000*60*60*24))
-            if(c>1){
-                _.merge(param,{"totalprice":hotelresult.price,"time":orderesult.time+1,"hotelprice":req.query.realprice*hotelresult.divide,"jdprice":req.query.realprice*(1-hotelresult.divide),"realprice":req.query.realprice})
-                orderesult = await orderManager.createOrder(param); 
-            }
-            res.json({code:20000, state: "success", order:orderesult })
-            // let recordresult = await deviceRecordManager.createDeviceRecord(
-            //     {"orderid":orderesult.id,
-            //     "deviceid":req.query.deviceid,
-            //     "playerid":req.query.playerid
-            // })
-            // if(!!recordresult){
-            //     res.json({code:20000, state: "success", order:orderesult })
-            // }else{
-            //     res.json({state: "error", errorMsg:"创建使用记录失败2" })
-            // }
-        }else{
-            _.merge(param,{"totalprice":hotelresult.price,"time":1,"hotelprice":(req.query.realprice)*hotelresult.divide,"jdprice":(req.query.realprice)*(1-hotelresult.divide),"realprice":req.query.realprice})
-            orderesult = await orderManager.createOrder(param);
-            if(!!orderesult){
-                res.json({code:20000, state: "success", order:orderesult })
-                // var recordresult = await deviceRecordManager.createDeviceRecord(
-                //     {"orderid":orderesult.id,
-                //     "deviceid":param.deviceid,
-                //     "playerid":param.playerid
-                // })
-                // if(!!recordresult){
-                //     res.json({code:20000, state: "success", order:orderesult })
-                // }else{
-                //     res.json({state: "error", errorMsg:"创建使用记录失败4" })
-                // }
-            }else{
-                res.json({ state:"error", errorMsg:"创建订单失败" })
-            }
-        }
-
-
-
-
+        return await createorder(req,res)
 
             // let orderesult = await orderManager.getByDeviceId(req.query.deviceid)
             // console.log(orderesult)
