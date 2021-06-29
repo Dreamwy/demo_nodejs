@@ -39,10 +39,8 @@ module.exports = app => {
             return res.json({ state: "error", errorMsg:"用户id不能为空" })
         }
         if(_.isEmpty(req.query.realprice)){
-            console.log("!!!~~~~")
             req.query.realprice = 0
         }
-        console.log("!!!~~~~",req.query.realprice)
         let orderesult = await orderManager.getByPlayeridandDeviceid(req.query.playerid,req.query.deviceid)
         if(!!orderesult){
             let a = moment().valueOf()
