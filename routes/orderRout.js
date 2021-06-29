@@ -39,8 +39,10 @@ module.exports = app => {
             return res.json({ state: "error", errorMsg:"用户id不能为空" })
         }
         if(_.isEmpty(req.query.realprice)){
+            console.log("!!!~~~~")
             req.query.realprice = 0
         }
+        console.log("!!!~~~~",req.query.realprice)
         let orderesult = await orderManager.getByPlayeridandDeviceid(req.query.playerid,req.query.deviceid)
         if(!!orderesult){
             let a = moment().valueOf()
@@ -167,7 +169,7 @@ module.exports = app => {
         //   }
         // 业务逻辑...
         await wxOrderManager.create(info)
-        let r = {"query":{"deviceid":info.attach,"playerid":info.openid,"realprice":info.total_fee/100,"wxorder":info.out_trade_no}}
+        let r = {"query":{"deviceid":info.attach,"playerid":info.openid,"realprice":(info.total_fee/100).toString(),"wxorder":info.out_trade_no}}
         await createorder(r,res)
         // 回复消息(参数为空回复成功, 传值则为错误消息)
         console.log(info)
