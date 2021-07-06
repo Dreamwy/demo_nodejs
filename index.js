@@ -7,7 +7,7 @@ app.use(cors())
 
 consign({verbose : false})
   .include("libs/config.js")
-  .then("redis.js")
+  // .then("redis.js")
   .then("db.js")
   .include("service")
   .then("libs/middlewares.js")

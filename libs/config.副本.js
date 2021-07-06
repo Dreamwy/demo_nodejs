@@ -7,7 +7,7 @@ module.exports = {
 	database: {
 		username: 'root',
 		password: 'JDKJ@xiaoxiang%2021',
-		database: 'bath',
+		database: 'JDshared',
 		dialect: 'mysql',
 		host: '172.21.0.16',
 		port: 3306,

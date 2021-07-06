@@ -7,7 +7,7 @@ import helmet from 'helmet';
 import logger from './logger.js';
 import _ from 'lodash';
 module.exports = app => {
-	const client = app.redis.config;
+	// const client = app.redis.config;
 	const config = app.libs.config;
 	const {userManager,utilManager} = app.service;
 	app.set('port', app.libs.config.http.port);
