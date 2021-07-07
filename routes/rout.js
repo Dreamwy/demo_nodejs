@@ -107,13 +107,30 @@ module.exports = app => {
     });
 
     app.get("/api/createmac",async(req,res)=>{
-        let mac = randomMac('56:80:c7')
-        let result = await macManager.create({"mac":mac,"deviceqrid":mac,"blename":mac});
+        if(_.isEmpty(req.query.deviceqrid)){
+            return res.json({ state: "error", errorMsg:"deviceqrid不能为空" })
+        }
+        if(_.isEmpty(req.query.mac)){
+            return res.json({ state: "error", errorMsg:"mac不能为空" })
+        }
+        if(_.isEmpty(req.query.blename)){
+            return res.json({ state: "error", errorMsg:"blename不能为空" })
+        }
+        let result = await macManager.getOne({"deviceqrid":req.query.deviceqrid})
+        if(!!result){
+            console.log(result)
+            return res.json({ state:"error", errorMsg:"deviceqrid已存在" })
+        }
+        result = await macManager.getOne({"mac":req.query.mac})
+        if(!!result){
+            return res.json({ state:"error", errorMsg:"mac已存在" })
+        }
+        result = await macManager.create({"mac":req.query.mac,"deviceqrid":req.query.deviceqrid,"blename":req.query.blename});
         if(!!result){
             result.dataValues.code = 20000
-            res.json(result)
+            return res.json(result)
         }else{
-            res.json({ state:"error", errorMsg:"创建失败" })
+            return res.json({ state:"error", errorMsg:"创建失败" })
         }
     });
 

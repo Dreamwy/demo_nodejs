@@ -3,9 +3,9 @@ import moment from 'moment'
 module.exports = function(sequelize, DataTypes) {
 	let Mac = sequelize.define("Mac", {
 		mac: { type: Sequelize.STRING, primaryKey: true,allowNull: false},
-		deviceqrid: { type: Sequelize.STRING},
+		deviceqrid: { type: Sequelize.STRING,allowNull:false},
         deviceqr:  { type: Sequelize.DataTypes.BLOB('medium')},
-        blename:  { type: Sequelize.STRING},
+        blename:  { type: Sequelize.STRING,allowNull:false},
 		installtime: {
             type: Sequelize.DATE,
             get() {

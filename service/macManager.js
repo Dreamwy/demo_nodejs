@@ -5,6 +5,7 @@ class MacManager extends BaseManager {
         super(app,'Mac');
     }
 	
+
 	async getBydeviceqrid(deviceqrid) {
         let result = await this.model.findOne({
 			where: {
