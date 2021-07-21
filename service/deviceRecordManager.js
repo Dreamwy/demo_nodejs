@@ -23,11 +23,14 @@ class DeviceRecordManager extends BaseManager {
 			},
           	order: [['created_at', 'DESC']],
 		  })
-		  result = await this.model.update(param,{
-			where: {
-				id: result.id
-			}
-		  })
+		  if(!!result){
+			result = await this.model.update(param,{
+				where: {
+					id: result.id
+				}
+			  })
+		  }
+		
 		  return result;
 	}
 
