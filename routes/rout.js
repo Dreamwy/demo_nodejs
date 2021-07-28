@@ -119,7 +119,7 @@ module.exports = app => {
         let result = await macManager.getOne({"deviceqrid":req.query.deviceqrid})
         if(!!result){
             console.log(result)
-            return res.json({ state:"error", errorMsg:"deviceqrid已存在" })
+            return res.json({ state:"error", errorMsg:"二维码已存在" })
         }
         result = await macManager.getOne({"mac":req.query.mac})
         if(!!result){
